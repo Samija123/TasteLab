@@ -3,10 +3,8 @@ import { test, expect } from '@playwright/test';
 test('User profile loads and updates (mocked backend)', async ({ page }) => {
   await page.goto('http://localhost:5180/profile');
 
-  // Wait for the profile page to load fully
   await page.waitForSelector('form');
 
-  // Select inputs by label text + sibling input
   const firstNameInput = page.locator('label:has-text("First Name") + input');
   const lastNameInput = page.locator('label:has-text("Last Name") + input');
   const emailInput = page.locator('label:has-text("Email") + input');

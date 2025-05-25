@@ -34,19 +34,16 @@ test('Profile page loads and shows main elements', async ({ page }) => {
   await expect(form.locator('input[type="email"]')).toHaveValue('Samija123@gmail.com');
   await expect(form.locator('input[type="tel"]')).toHaveValue('+387 62 987 654');
 
-  // Check health info fields
   await expect(form.locator('input[type="text"]').nth(2)).toHaveValue('5\'10"');
   await expect(form.locator('input[type="text"]').nth(3)).toHaveValue('100 lbs');
   await expect(form.locator('input[type="date"]')).toHaveValue('2003-01-15');
 
-  // Check dietary preferences checkboxes
   const checkboxes = form.locator('input[type="checkbox"]');
   await expect(checkboxes).toHaveCount(6);
-  // Check that first and last are checked by default
+  
   await expect(checkboxes.nth(0)).toBeChecked();
   await expect(checkboxes.nth(5)).toBeChecked();
 
-  // Check buttons presence and text
   await expect(form.locator('button').nth(0)).toHaveText('Cancel');
   await expect(form.locator('button').nth(1)).toHaveText('Save Changes');
 });

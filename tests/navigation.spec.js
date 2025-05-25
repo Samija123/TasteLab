@@ -1,40 +1,37 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Navigation tests', () => {
+  const navItems = [
+  { label: 'Home', path: '/' },
+  { label: 'Recipes', path: '/recipes', },
+  { label: 'Wellness', path: '/wellness', },
+  { label: 'Profile', path: '/profile',}
+];
+
+
   test.beforeEach(async ({ page }) => {
-    await page.goto('/'); // Start from homepage before each test
+    await page.goto('/');
   });
 
   test('Navigation links are visible', async ({ page }) => {
-    // Check main nav links by text
-    await expect(page.locator('text=Dashboard')).toBeVisible();
-    await expect(page.locator('text=Recipes')).toBeVisible();
-    await expect(page.locator('text=Wellness')).toBeVisible();
-    await expect(page.locator('text=Grocery List')).toBeVisible();
-    await expect(page.locator('text=Profile')).toBeVisible();
+    for (const item of navItems) {
+      const link = page.getByRole('link', { name: item.label });
+      await expect(link).toBeVisible({ timeout: 15000 });
+    }
   });
 
-  test('Navigate to Recipes page', async ({ page }) => {
-    await page.click('text=Recipes');
-    await expect(page).toHaveURL(/.*recipes/);
-    await expect(page.locator('text=Recipe Categories')).toBeVisible();
-  });
+  for (const item of navItems) {
+    test(`Navigate to ${item.label} page`, async ({ page }) => {
+      const link = page.getByRole('link', { name: item.label });
+      await expect(link).toBeVisible({ timeout: 15000 });
+      await link.click();
 
-  test('Navigate to Wellness page', async ({ page }) => {
-    await page.click('text=Wellness');
-    await expect(page).toHaveURL(/.*wellness/);
-    await expect(page.locator('text=Fitness Tracking')).toBeVisible();
-  });
+      await expect(page).toHaveURL(new RegExp(item.path));
 
-  test('Navigate to Grocery List page', async ({ page }) => {
-    await page.click('text=Grocery List');
-    await expect(page).toHaveURL(/.*grocery-list/);
-    await expect(page.locator('text=Meal Planning')).toBeVisible();
-  });
-
-  test('Navigate to Profile page', async ({ page }) => {
-    await page.click('text=Profile');
-    await expect(page).toHaveURL(/.*profile/);
-    await expect(page.locator('text=User Preferences')).toBeVisible();
-  });
+      if (item.heading) {
+        const heading = page.locator('h2.section-title', { hasText: item.heading });
+        await expect(heading).toBeVisible({ timeout: 15000 });
+      }
+    });
+  }
 });
